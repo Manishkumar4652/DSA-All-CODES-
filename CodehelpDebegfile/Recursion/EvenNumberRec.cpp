@@ -9,7 +9,7 @@ int isodd(int arr[], int size, int index)
     }
 
     // Processing case
-    if (arr[index]%2 == 0)
+    if (!(arr[index] & 1))  // Use & opertor
     {
         return arr[index];
     }
