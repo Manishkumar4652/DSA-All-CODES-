@@ -15,3 +15,5 @@ int main()
     }
     cout << "Reverse number is: " << ans;
 }
+// This code takes an integer input from the user and reverses the digits of the number.
+// For example, if the user inputs 1234, the output will be 4321.
