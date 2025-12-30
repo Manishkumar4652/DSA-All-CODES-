@@ -25,3 +25,24 @@ int main(){
     int ans = solve(arr , index);
     cout<<ans;
 }
+
+
+
+
+//                                   solve(0)
+//                               (₹1, index 0)
+//                         /                               \
+//            Include → 1 + solve(2)                  Exclude → solve(1)
+//                    = 5                                  = 6
+//                     |                                    |
+//                  solve(2)                             solve(1)
+//             (₹3, index 2)                        (₹2, index 1)
+//               /            \                      /             \
+//    3+solve(4) = 3      solve(3)=4         2+solve(3)=6      solve(2)=4
+//         |                 |                    |                |
+//     solve(4)          solve(3)              solve(3)         solve(2)
+//    return 0          (₹4, idx3)            (₹4, idx3)       (₹3, idx2)
+//                        /     \
+//                  4+solve(5)  solve(4)
+//                     |          |
+//                 return 0    return 0
