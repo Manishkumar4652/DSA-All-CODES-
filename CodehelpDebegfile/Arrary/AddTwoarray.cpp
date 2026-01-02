@@ -3,8 +3,8 @@
 #include<algorithm>
 using namespace std;
 int main(){
-    vector<int> a = {8,2,1,4};
-    vector<int> b = {4,3,2,1};
+    vector<int> a = {8,2,1,9};
+    vector<int> b = {1};
 
     string ans;
     int carry = 0;
@@ -21,7 +21,7 @@ int main(){
     }
 
     while(j>=0){
-        int x = a[i] + 0 + carry;
+        int x = 0 + b[j] + carry;
         int digit = x%10;
         ans.push_back(digit + '0');
         carry = x/10;
@@ -29,7 +29,7 @@ int main(){
     }
 
     while(i>=0){
-        int x = 0 + b[j] + carry;
+        int x = a[i] + 0 + carry;
         int digit = x%10;
         ans.push_back(digit + '0');
         carry = x/10;
@@ -44,7 +44,7 @@ int main(){
         ans.pop_back();
     }
 
-    // reverse(ans.begin() , ans.end());
+    reverse(ans.begin() , ans.end());
     cout<< ans <<" ";
 
 }
