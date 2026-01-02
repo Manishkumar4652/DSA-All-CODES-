@@ -9,9 +9,9 @@ int main(){
     for(int i=0;i<4;i++){
         sum = sum + arr[i][i];
     }
-        for(int i=0;i<4;i++){
+    for(int i=0;i<4;i++){
             sum = sum + arr[i][4-i-1];
-        }
+    }
     if(4 & 1){
         sum = sum - arr[4/2][4/2];
     }   
