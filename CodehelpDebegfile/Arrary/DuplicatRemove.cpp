@@ -1,3 +1,4 @@
+
 #include<iostream>
 #include<vector>
 using namespace std;
@@ -10,15 +11,13 @@ int main(){
         if(arr[i] == arr[j]){
             i++;
         }
-
         else{
             j++;
             arr[j] = arr[i];
             i++;
         }
     }
-        cout<<j+1;
-       
+        cout<<j+1;     
 }
 
 
