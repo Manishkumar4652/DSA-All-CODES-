@@ -26,3 +26,46 @@ int main(){
     cout<<arr;
 
 }
+
+
+
+class Solution {
+public:
+    // Function to convert lowercase letters to uppercase
+    string toUpperCase(string s) {
+
+        // Traverse each character of the string
+        for (int i = 0; i < s.length(); i++) {
+
+            // Check if character is lowercase
+            if (s[i] >= 'a' && s[i] <= 'z') {
+
+                // Convert lowercase to uppercase using ASCII logic
+                s[i] = s[i] - 'a' + 'A';
+            }
+        }
+
+        return s;
+    }
+
+    // Function to convert uppercase letters to lowercase
+    string toLowerCase(string s) {
+
+        // Traverse each character of the string
+        for (int i = 0; i < s.length(); i++) {
+
+            // Check if character is uppercase
+            if (s[i] >= 'A' && s[i] <= 'Z') {
+
+                // Convert uppercase to lowercase using ASCII logic
+                s[i] = s[i] - 'A' + 'a';
+            }
+        }
+
+        return s;
+    }
+};
+
+
+
+

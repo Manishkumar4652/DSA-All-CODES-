@@ -37,3 +37,32 @@ int main(){
 
     cout<<solve(prices , day , minprice , maxprofit);
 }   
+
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+
+        int minPrice = INT_MAX;   // Minimum price so far
+        int maxProfit = 0;        // Maximum profit
+
+        // Traverse prices array
+        for (int i = 0; i < prices.size(); i++) {
+
+            // Update minimum price
+            if (prices[i] < minPrice) {
+                minPrice = prices[i];
+            }
+
+            // Calculate today's profit
+            int todayProfit = prices[i] - minPrice;
+
+            // Update maximum profit
+            if (todayProfit > maxProfit) {
+                maxProfit = todayProfit;
+            }
+        }
+
+        return maxProfit;
+    }
+};
