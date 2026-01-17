@@ -55,3 +55,36 @@ int main(){
     cout<<(isValid(s) ? "true ": "false");
     return 0;
 }
+
+
+class Solution {
+public:
+    bool isValid(string s) {
+
+        // Keep removing valid pairs until no more exist
+        while (
+            s.find("()") != string::npos ||
+            s.find("{}") != string::npos ||
+            s.find("[]") != string::npos
+        ) {
+
+            // If round brackets pair exists, remove it
+            if (s.find("()") != string::npos) {
+                s.erase(s.find("()"), 2);
+            }
+
+            // If curly brackets pair exists, remove it
+            if (s.find("{}") != string::npos) {
+                s.erase(s.find("{}"), 2);
+            }
+
+            // If square brackets pair exists, remove it
+            if (s.find("[]") != string::npos) {
+                s.erase(s.find("[]"), 2);
+            }
+        }
+
+        // If string becomes empty, parentheses are valid
+        return s.empty();
+    }
+};
