@@ -9,3 +9,23 @@ int main(){
     }
         cout<<s;
 }
+
+class Solution {
+public:
+    string removeOccurrences(string s, string part) {
+
+        // Keep removing 'part' from string 's'
+        // until it no longer exists
+        while (s.find(part) != string::npos) {
+
+            // Find the starting index of 'part'
+            int index = s.find(part);
+
+            // Erase 'part' from the string
+            s.erase(index, part.length());
+        }
+
+        // Return the final string
+        return s;
+    }
+};
