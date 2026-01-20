@@ -23,7 +23,7 @@ int main(){
             j++;
         }
         if (j == m) {
-            return i;
+            cout<< i;
         }
     }
     return -1;

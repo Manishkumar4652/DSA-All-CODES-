@@ -48,3 +48,38 @@ int main(){
     }
         cout<<maxsum;
 }
+
+
+// LeetCode 53. Maximum Subarray
+// Kadane's Algorithm
+
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        
+        // Stores the maximum subarray sum found so far
+        int maxSum = INT_MIN;
+        
+        // Stores the current subarray sum
+        int currentSum = 0;
+        
+        // Traverse through the array
+        for (int i = 0; i < nums.size(); i++) {
+            
+            // Add current element to the running sum
+            currentSum += nums[i];
+            
+            // Update maximum sum if currentSum is greater
+            maxSum = max(maxSum, currentSum);
+            
+            // If currentSum becomes negative, reset it to 0
+            // because negative sum will reduce future subarray sums
+            if (currentSum < 0) {
+                currentSum = 0;
+            }
+        }
+        
+        // Return the maximum subarray sum
+        return maxSum;
+    }
+};
