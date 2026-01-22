@@ -36,3 +36,29 @@ int main(){
     
     if(perA == perB) return 0;
 }
+
+
+class Solution {
+public:
+    int findClosest(int x, int y, int z) {
+        
+        // Calculate distance of Person A from me (Z)
+        int distanceA = abs(x - z);
+        
+        // Calculate distance of Person B from me (Z)
+        int distanceB = abs(y - z);
+
+        // If Person A is closer
+        if (distanceA < distanceB) {
+            return 1;
+        }
+
+        // If Person B is closer
+        if (distanceB < distanceA) {
+            return 2;
+        }
+
+        // If both are at the same distance
+        return 0;
+    }
+};
