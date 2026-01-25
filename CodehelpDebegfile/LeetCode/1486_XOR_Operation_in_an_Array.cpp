@@ -22,3 +22,25 @@ int main(){
     }
     cout<<ans;
 }
+
+
+class Solution {
+public:
+    int xorOperation(int n, int start) {
+        // This variable will store the final XOR result
+        int ans = 0;
+
+        // Loop from 0 to n-1
+        for (int i = 0; i < n; i++) {
+            // Generate the current element using the formula:
+            // nums[i] = start + 2*i
+            int currentValue = start + 2 * i;
+
+            // Apply XOR operation with the result
+            ans = ans ^ currentValue;
+        }
+
+        // Return the final XOR value
+        return ans;
+    }
+};
