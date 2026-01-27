@@ -33,3 +33,36 @@ int main(){
         }
         cout<<sum;
 }
+
+
+class Solution {
+public:
+    int sumFourDivisors(vector<int>& nums) {
+        int sum = 0;  // final answer
+        
+        // Traverse each number in the array
+        for (int i = 0; i < nums.size(); i++) {
+            int n = nums[i];
+            int count = 0;  // to count number of divisors
+            
+            // Count divisors of n
+            for (int j = 1; j <= n; j++) {
+                if (n % j == 0) {
+                    count++;
+                }
+            }
+ 
+            // If number has exactly 4 divisors
+            if (count == 4) {
+                // Add all its divisors to sum
+                for (int k = 1; k <= n; k++) {
+                    if (n % k == 0) {
+                        sum += k;
+                    }
+                }
+            }
+        }
+        
+        return sum;  // return total sum
+    }
+};
