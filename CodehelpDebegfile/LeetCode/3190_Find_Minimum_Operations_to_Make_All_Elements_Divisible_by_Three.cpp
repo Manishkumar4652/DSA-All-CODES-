@@ -22,3 +22,22 @@ int main(){
     }
     cout<<count;
 }
+
+
+class Solution {
+public:
+    int minimumOperations(vector<int>& nums) {
+        int count = 0;  // Count of elements not divisible by 3
+        
+        // Traverse the array
+        for (int i = 0; i < nums.size(); i++) {
+            // If current element is not divisible by 3
+            if (nums[i] % 3 != 0) {
+                count++;  // One operation needed
+            }
+        }
+        
+        // Return total operations required
+        return count;
+    }
+};
