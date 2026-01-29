@@ -1,0 +1,95 @@
+//n-queen problem
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+    bool issafe(int row , int col , vector<vector<char>>&board){
+        int n = board.size();
+        //check for horizontal
+        for(int i=col;i>=0;i--){
+            if(board[row][i] == 'Q'){
+                return false;
+            }
+        }
+
+        //left upper digonal
+        int i = row-1;
+        int j = col-1;
+
+        while(i>=0 && j>=0){
+            if(board[i][j] == 'Q'){
+                return false;
+            }
+            i--;
+            j--;
+        }
+
+        //left lower digonal
+        int x = row+1;
+        int y = col-1;
+
+        while(x<n && y>=0){
+            if(board[x][y] == 'Q'){
+                return false;
+            }
+            x++;
+            y--;   
+        }
+
+            return true;
+
+    }
+
+    void storeans(vector<vector<char>>&board , vector<vector<string>>&ans , int n){
+        vector<string> temp;
+
+        for(int row=0;row<n;row++){
+            string output = "";
+            for(int col=0;col<n;col++){
+                char ch = board[row][col];
+                output.push_back(ch);
+            }
+
+            temp.push_back(output);
+        }
+
+        ans.push_back(temp);
+    }
+
+    void solve(vector<vector<char>>&board,vector<vector<string>>&ans,int n,int col){
+        //base case
+        if(col >= n){
+            // one ans mil gya hai
+            storeans(board,ans,n);
+            return;
+        }
+        //ans nhi mila to
+        for(int row=0;row<n;row++){
+            if(issafe(row,col,board)){
+                board[row][col] = 'Q';
+
+                // baki recursion 
+                solve(board,ans,n,col+1);
+
+                // backtraking
+                board[row][col] = '.';
+            }
+        }
+    }
+int main(){
+    int n = 4;
+    vector<vector<char>> board(n,vector<char> (n,'.'));
+    vector<vector<string>> ans;
+    //starting column = 0
+    int col = 0;
+    solve(board,ans,n,col);
+
+    for(auto a:ans){
+        for(auto k:a){
+            cout<<k;
+            cout<<endl;
+        }
+        cout<<endl;
+    }
+    return 0;
+}
