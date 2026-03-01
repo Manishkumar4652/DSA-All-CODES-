@@ -77,7 +77,7 @@ using namespace std;
         }
     }
 int main(){
-    int n = 4;
+    int n = 8;
     vector<vector<char>> board(n,vector<char> (n,'.'));
     vector<vector<string>> ans;
     //starting column = 0
@@ -86,7 +86,7 @@ int main(){
 
     for(auto a:ans){
         for(auto k:a){
-            cout<<k;
+            cout<<k<<" ";
             cout<<endl;
         }
         cout<<endl;
