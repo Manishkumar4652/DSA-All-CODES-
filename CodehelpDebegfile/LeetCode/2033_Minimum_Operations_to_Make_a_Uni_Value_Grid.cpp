@@ -20,23 +20,31 @@
 using namespace std;
 int main(){
     vector<vector<int>> grid = {{2,4},{6,8}};
-    int n = grid.size();
-    int m = grid[0].size();
-    vector<int> arrange;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            arrange.push_back(grid[i][j]);
-        }
-    }
-    int a = arrange.size();
-    sort(arrange.begin(),arrange.end());
-    
-    int mid = a/2;
-    int target = arrange[mid];
+    int x = 2;
+        int m = grid.size();
+        int n = grid[0].size();
 
-    for(int k=0;k<a;k++){
-        if(target > arrange[k]){
-            
+        vector<int> vec;
+        //O(m*n)
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                vec.push_back(grid[i][j]);
+            }
         }
+
+        int L = vec.size(); //m*n
+
+        //sort(begin(vec), end(vec)); //O(LlogL)
+        nth_element(begin(vec), begin(vec) + L/2, end(vec)); //O(L)
+        int target = vec[L/2];
+        int result = 0;
+        for(int &num : vec) { //O(m*n)
+            if(num%x != target%x) {
+                cout<< -1;
+            }
+
+            result += abs(target-num)/x;
+        }
+
+        cout<< result;
     }
-}
