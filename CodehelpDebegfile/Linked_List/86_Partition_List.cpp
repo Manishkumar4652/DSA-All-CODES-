@@ -139,3 +139,51 @@ int main() {
 
     return 0;
 }
+
+
+
+
+// class Solution {
+// public:
+
+//     ListNode* partition(ListNode* head, int x) {
+
+//         // smaller list
+//         ListNode* smallHead = new ListNode(0);
+//         ListNode* smallTail = smallHead;
+
+//         // greater/equal list
+//         ListNode* largeHead = new ListNode(0);
+//         ListNode* largeTail = largeHead;
+
+//         ListNode* temp = head;
+
+//         while(temp != NULL) {
+
+//             // x se choti value
+//             if(temp->val < x) {
+
+//                 smallTail->next = temp;
+//                 smallTail = temp;
+//             }
+
+//             // x se badi ya equal value
+//             else {
+
+//                 largeTail->next = temp;
+//                 largeTail = temp;
+//             }
+
+//             temp = temp->next;
+//         }
+
+//         // important
+//         largeTail->next = NULL;
+
+//         // merge
+//         smallTail->next = largeHead->next;
+
+//         // final answer
+//         return smallHead->next;
+//     }
+// };
