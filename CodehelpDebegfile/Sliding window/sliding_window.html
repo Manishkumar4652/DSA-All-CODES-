@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>First Negative in Every Window — Animation</title>
+<style>
+  :root{
+    --bg: #0d1117;
+    --panel: #131a23;
+    --line: #232d3b;
+    --text: #d7dde5;
+    --muted: #6b7686;
+    --accent: #ff6b4a;     /* current window / pointer */
+    --accent2: #4ad6a8;    /* deque */
+    --accent3: #5aa9ff;    /* answer */
+    --neg: #ff6b4a;
+    --mono: "JetBrains Mono","Fira Code",Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--mono);
+    padding:28px 18px 60px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  h1{
+    font-size:15px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:500;
+    margin:0 0 26px;
+  }
+  h1 span{color:var(--accent);}
+
+  .stage{
+    width:100%;
+    max-width:760px;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+
+  /* ---- array ---- */
+  .array-row{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .cell{
+    position:relative;
+    width:64px;
+    height:64px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    font-weight:600;
+    background:var(--panel);
+    transition: border-color .25s, background .25s, transform .25s, box-shadow .25s;
+  }
+  .cell .idx{
+    position:absolute;
+    bottom:-20px;
+    font-size:11px;
+    color:var(--muted);
+    font-weight:400;
+  }
+  .cell.neg{ color: var(--neg); }
+  .cell.inwindow{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent) inset;
+  }
+  .cell.outwindow{ opacity:.32; }
+  .cell.newest{
+    transform: translateY(-6px);
+  }
+  .cell.popped{
+    border-color: var(--muted);
+  }
+  .cell.frontptr{
+    background: rgba(74,214,168,.12);
+  }
+
+  .window-bracket{
+    height:6px;
+    margin-top:28px;
+    position:relative;
+  }
+  .bracket-line{
+    position:absolute;
+    height:2px;
+    background:var(--accent);
+    top:0;
+    transition: left .3s, width .3s;
+    border-radius:2px;
+  }
+
+  /* ---- panels (deque / ans) ---- */
+  .panels{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .panel{
+    flex:1;
+    min-width:260px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 16px 16px;
+  }
+  .panel-title{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--muted);
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .panel-title b{color:var(--text); font-weight:600;}
+
+  .dq-row, .ans-row{
+    display:flex;
+    gap:6px;
+    min-height:46px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .chip{
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:6px 10px;
+    font-size:14px;
+    background:#0d1117;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    animation: pop .25s ease;
+  }
+  .chip .v{font-weight:700;}
+  .chip .i{font-size:10px;color:var(--muted);}
+  .dq-row .chip{border-color:var(--accent2); color:var(--accent2);}
+  .dq-row .chip.front{background: rgba(74,214,168,.12);}
+  .ans-row .chip{border-color:var(--accent3); color:var(--accent3);}
+  .empty-hint{color:var(--muted); font-size:12px;}
+
+  @keyframes pop{
+    from{ transform: scale(.5); opacity:0; }
+    to{ transform: scale(1); opacity:1; }
+  }
+
+  /* ---- explanation ---- */
+  .explain{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:13.5px;
+    line-height:1.55;
+    min-height:74px;
+  }
+  .explain b{color:var(--accent);}
+  .explain code{
+    background:#0d1117;
+    padding:1px 5px;
+    border-radius:4px;
+    color:var(--accent3);
+  }
+
+  /* ---- controls ---- */
+  .controls{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:6px;
+  }
+  button{
+    font-family:var(--mono);
+    background:#1b2330;
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:8px 16px;
+    border-radius:6px;
+    font-size:13px;
+    cursor:pointer;
+    transition: background .15s, border-color .15s;
+  }
+  button:hover{ background:#232d3b; border-color:#3a4658; }
+  button:disabled{ opacity:.35; cursor:default; }
+  button.primary{ border-color: var(--accent); color: var(--accent); }
+
+  .step-counter{
+    color:var(--muted);
+    font-size:12px;
+    min-width:90px;
+    text-align:center;
+  }
+
+  .legend{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    justify-content:center;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:8px;
+  }
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .dot{width:10px;height:10px;border-radius:3px; display:inline-block;}
+</style>
+</head>
+<body>
+
+<h1>First negative number in every window of size <span>k</span></h1>
+
+<div class="stage">
+
+  <div class="array-row" id="arrayRow"></div>
+  <div class="window-bracket"><div class="bracket-line" id="bracketLine"></div></div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-title">deque &nbsp;(stores indices)<b id="dqSize">0</b></div>
+      <div class="dq-row" id="dqRow"><span class="empty-hint">empty</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">ans</div>
+      <div class="ans-row" id="ansRow"><span class="empty-hint">empty</span></div>
+    </div>
+  </div>
+
+  <div class="explain" id="explain"></div>
+
+  <div class="controls">
+    <button id="prevBtn">&larr; Prev</button>
+    <button id="playBtn" class="primary">▶ Play</button>
+    <button id="nextBtn">Next &rarr;</button>
+    <div class="step-counter" id="counter"></div>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--accent)"></span>current window</span>
+    <span><span class="dot" style="background:var(--accent2)"></span>deque (negative indices)</span>
+    <span><span class="dot" style="background:var(--accent3)"></span>answer so far</span>
+  </div>
+
+</div>
+
+<script>
+const arr = [-8, 2, 3, -6, 10];
+const k = 3;
+
+// ---------- simulate algorithm & record every micro-step ----------
+const steps = [];
+function snapshot(extra){
+  steps.push(Object.assign({
+    dq: [...dq],
+    ans: [...ans],
+  }, extra));
+}
+
+let dq = [];
+let ans = [];
+
+snapshot({phase:'start', windowStart:0, windowEnd:k-1,
+  text:`Pehli window <code>[0..${k-1}]</code> process karenge. Deque me sirf <b>negative numbers ke indices</b> store karte hain.`});
+
+// first window scan
+for(let i=0;i<k;i++){
+  const el = arr[i];
+  if(el<0){
+    dq.push(i);
+    snapshot({phase:'scan-first', windowStart:0, windowEnd:k-1, highlight:i,
+      text:`<code>i=${i}</code> → element <b>${el}</b> negative hai, isliye index <code>${i}</code> deque me <b>push_back</b> kiya.`});
+  } else {
+    snapshot({phase:'scan-first', windowStart:0, windowEnd:k-1, highlight:i,
+      text:`<code>i=${i}</code> → element <b>${el}</b> positive/zero hai, deque me kuch add nahi hota.`});
+  }
+}
+
+// first window answer
+{
+  let val = dq.length ? arr[dq[0]] : 0;
+  ans.push(val);
+  snapshot({phase:'answer-first', windowStart:0, windowEnd:k-1, frontIdx: dq.length?dq[0]:null,
+    text: dq.length
+      ? `Deque empty nahi hai → <code>dq.front() = ${dq[0]}</code> → <code>arr[${dq[0]}] = ${val}</code>. Ye window ka answer hai: <b>${val}</b>.`
+      : `Deque empty hai → koi negative nahi mila → answer <b>0</b>.`});
+}
+
+// remaining windows
+for(let i=k;i<arr.length;i++){
+  const windowStart = i-k+1, windowEnd = i;
+
+  // removal check
+  if(dq.length && (i - dq[0] >= k)){
+    const removed = dq.shift();
+    snapshot({phase:'remove', windowStart, windowEnd, poppedIdx: removed,
+      text:`Removal check: <code>i - dq.front() = ${i} - ${removed} = ${i-removed}</code>, jo <code>&gt;= k(${k})</code> hai. Matlab index <code>${removed}</code> window se bahar nikal gaya → <b>pop_front()</b>.`});
+  } else {
+    snapshot({phase:'remove-skip', windowStart, windowEnd,
+      text: dq.length
+        ? `Removal check: <code>i - dq.front() = ${i - dq[0]}</code>, jo <code>&lt; k(${k})</code> hai → front abhi bhi window ke andar hai, pop nahi karte.`
+        : `Deque abhi empty hai, removal check ki zaroorat nahi.`});
+  }
+
+  // addition
+  const el = arr[i];
+  if(el<0){
+    dq.push(i);
+    snapshot({phase:'add', windowStart, windowEnd, highlight:i,
+      text:`Addition: <code>i=${i}</code> → element <b>${el}</b> negative hai → index <code>${i}</code> deque me <b>push_back</b> kiya.`});
+  } else {
+    snapshot({phase:'add-skip', windowStart, windowEnd, highlight:i,
+      text:`Addition: <code>i=${i}</code> → element <b>${el}</b> positive hai → deque me kuch add nahi hota.`});
+  }
+
+  // answer
+  let val = dq.length ? arr[dq[0]] : 0;
+  ans.push(val);
+  snapshot({phase:'answer', windowStart, windowEnd, frontIdx: dq.length?dq[0]:null,
+    text: dq.length
+      ? `Answer: <code>dq.front() = ${dq[0]}</code> → <code>arr[${dq[0]}] = ${val}</code>. Is window ka answer: <b>${val}</b>.`
+      : `Deque empty hai → answer <b>0</b>.`});
+}
+
+snapshot({phase:'done', windowStart:arr.length-k, windowEnd:arr.length-1,
+  text:`✅ Sabhi windows process ho gayi. Final <b>ans = [${ans.join(', ')}]</b>`});
+
+// ---------- render ----------
+const arrayRow = document.getElementById('arrayRow');
+const bracketLine = document.getElementById('bracketLine');
+const dqRow = document.getElementById('dqRow');
+const ansRow = document.getElementById('ansRow');
+const explain = document.getElementById('explain');
+const counter = document.getElementById('counter');
+
+arr.forEach((v,i)=>{
+  const cell = document.createElement('div');
+  cell.className = 'cell' + (v<0?' neg':'');
+  cell.id = 'cell'+i;
+  cell.innerHTML = `${v}<span class="idx">${i}</span>`;
+  arrayRow.appendChild(cell);
+});
+
+let cur = 0;
+
+function render(){
+  const s = steps[cur];
+
+  // cells
+  arr.forEach((v,i)=>{
+    const cell = document.getElementById('cell'+i);
+    cell.classList.remove('inwindow','outwindow','newest','popped','frontptr');
+    if(i < s.windowStart || i > s.windowEnd){
+      cell.classList.add('outwindow');
+    } else {
+      cell.classList.add('inwindow');
+    }
+    if(s.highlight===i) cell.classList.add('newest');
+    if(s.poppedIdx===i) cell.classList.add('popped');
+    if(s.frontIdx===i) cell.classList.add('frontptr');
+  });
+
+  // bracket under window
+  const cellW = 64, gap = 8;
+  const totalWidth = cellW*arr.length + gap*(arr.length-1);
+  const rowOffset = (arrayRow.parentElement.parentElement.clientWidth); // not used, flex centers row itself
+  const left = s.windowStart*(cellW+gap);
+  const width = (s.windowEnd - s.windowStart + 1)*cellW + (s.windowEnd - s.windowStart)*gap;
+  bracketLine.style.left = ((arrayRow.clientWidth - totalWidth)/2 + left) + 'px';
+  bracketLine.style.width = width + 'px';
+
+  // deque
+  document.getElementById('dqSize').textContent = s.dq.length;
+  if(s.dq.length===0){
+    dqRow.innerHTML = '<span class="empty-hint">empty</span>';
+  } else {
+    dqRow.innerHTML = s.dq.map((idx,pos)=>
+      `<div class="chip${pos===0?' front':''}"><span class="v">${arr[idx]}</span><span class="i">idx ${idx}${pos===0?' • front':''}</span></div>`
+    ).join('');
+  }
+
+  // ans
+  if(s.ans.length===0){
+    ansRow.innerHTML = '<span class="empty-hint">empty</span>';
+  } else {
+    ansRow.innerHTML = s.ans.map(v=>`<div class="chip"><span class="v">${v}</span></div>`).join('');
+  }
+
+  explain.innerHTML = s.text;
+  counter.textContent = `step ${cur+1} / ${steps.length}`;
+
+  document.getElementById('prevBtn').disabled = cur===0;
+  document.getElementById('nextBtn').disabled = cur===steps.length-1;
+}
+
+document.getElementById('nextBtn').onclick = ()=>{ if(cur<steps.length-1){ cur++; render(); } };
+document.getElementById('prevBtn').onclick = ()=>{ if(cur>0){ cur--; render(); } };
+document.getElementById('resetBtn').onclick = ()=>{ cur=0; render(); stopPlay(); };
+
+let playInterval = null;
+function stopPlay(){
+  clearInterval(playInterval);
+  playInterval = null;
+  document.getElementById('playBtn').textContent = '▶ Play';
+}
+document.getElementById('playBtn').onclick = ()=>{
+  if(playInterval){ stopPlay(); return; }
+  document.getElementById('playBtn').textContent = '⏸ Pause';
+  playInterval = setInterval(()=>{
+    if(cur < steps.length-1){ cur++; render(); }
+    else { stopPlay(); }
+  }, 1400);
+};
+
+window.addEventListener('resize', render);
+render();
+</script>
+
+</body>
+</html>
