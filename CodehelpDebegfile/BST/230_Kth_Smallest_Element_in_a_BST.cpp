@@ -134,3 +134,31 @@ int main() {
 
     return 0;
 }
+
+
+
+
+
+// class Solution {
+// public:
+//     void solve(TreeNode* root, int k, int &count, int &ans) {
+//         if(root == NULL) {
+//             return;
+//         }
+//         //LNR
+//         solve(root->left, k, count, ans);
+//         count++;
+//         if(count == k) {
+//             //ans store
+//             ans = root->val;
+//             return ;
+//         }
+//         solve(root->right, k, count, ans);
+//     }
+//     int kthSmallest(TreeNode* root, int k) {
+//         int count = 0;
+//         int ans = -1;
+//         solve(root,k,count,ans);
+//         return ans;   
+//     }
+// };
