@@ -1,7 +1,7 @@
 #include<iostream>
 using namespace std;
 int main(){
-    int a = 28, b = 35;
+    int a = 2, b = 8;
     // Euclidean Algorithm using repeated subtraction
     while(a != b){
         if(a > b){
