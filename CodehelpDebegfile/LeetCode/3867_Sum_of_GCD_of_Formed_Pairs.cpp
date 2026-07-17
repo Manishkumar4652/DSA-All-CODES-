@@ -27,20 +27,14 @@
 #include <algorithm>
 using namespace std;
 vector<int> store;
-int findGcd(int a, int b){
-        while(a != b){
-        if(a > b){
-            // Subtract the smaller number from the larger one
-            a = a - b;
+    int findGcd(int a, int b){
+        while(b){
+            int temp = b;
+            b = a % b;
+            a = temp;
         }
-        else{
-            // Subtract 'a' from 'b' if 'b' is larger
-            b = b - a;
-        }
+        return a;
     }
-    // When a == b, that value is the GCD
-    return a;
-}
 
 int main(){
     vector<int> nums = {3,6,2,8};
