@@ -1,0 +1,45 @@
+// 2996. Smallest Missing Integer Greater Than Sequential Prefix Sum
+// Example 1:
+// Input: nums = [1,2,3,2,5]
+// Output: 6
+// Explanation: The longest sequential prefix of nums is [1,2,3] with a sum of 6. 6 is not in the array, therefore 6 is the smallest missing integer greater than or equal to the sum of the longest sequential prefix.
+// Example 2:
+// Input: nums = [3,4,5,1,12,14,13]
+// Output: 15
+// Explanation: The longest sequential prefix of nums is [3,4,5] with a sum of 12. 12, 13, and 14 belong to the array while 15 does not. Therefore 15 is the smallest missing integer greater than or equal to the sum of the longest sequential prefix.
+
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+
+using namespace std;
+
+int missingInteger(vector<int>& nums) {
+    int n = nums.size();
+    
+    // Step 1: Longest sequential prefix ka sum nikalna
+    int sum = nums[0];
+    for (int i = 1; i < n; i++) {
+        if (nums[i] == nums[i - 1] + 1) {
+            sum += nums[i];
+        } else {
+            break; // Sequential chain toot gayi
+        }
+    }
+
+    // Step 2: Array ke sare numbers ko set me daalna (Fast Lookup ke liye)
+    unordered_set<int> st(nums.begin(), nums.end());
+
+    // Step 3: Smallest missing integer dhoondna
+    while (st.count(sum)) {
+        sum++;
+    }
+
+    return sum;
+}
+
+int main() {
+    vector<int> nums = {3, 4, 5, 1, 12, 14, 13};
+    cout << missingInteger(nums) << endl; // Output: 15
+    return 0;
+}
