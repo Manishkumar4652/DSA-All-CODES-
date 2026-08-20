@@ -31,6 +31,7 @@ public:
         vector<vector<bool>> matrix(n, vector<bool>(10, true));
         for (int i = 0; i < reservedSeats.size(); i++) {
             int r = reservedSeats[i][0] - 1;
+            
             int c = reservedSeats[i][1] - 1;
             matrix[r][c] = false;
         }
