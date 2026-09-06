@@ -38,7 +38,6 @@ int main() {
     int k = 3;
     int n = nums.size();
 
-    // Suffix minimum
     vector<int> suffixMin(n);
 
     suffixMin[n - 1] = nums[n - 1];
